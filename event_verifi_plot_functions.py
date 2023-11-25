@@ -11,17 +11,51 @@ import matplotlib.pyplot as plt
 # figures of the histogram of time between both fon and foff events
 def plot_timebtw_force_onoff(fon_events, foff_events, dt, save_path):
     time_between_fon_events = np.diff(np.nonzero(fon_events)[0])*dt
-    plt.hist(time_between_fon_events,density=False)
+    avgt_fon = np.average(time_between_fon_events)
+    plt.text(20,25,'avg time = {}'.format(avgt_fon))
+    plt.hist(time_between_fon_events,density=False,bins=50)
     plt.title('time between force on events')
     plt.xlabel('time (min)')
     plt.savefig(save_path+'/time_between_fon.png')
     plt.clf()
 
     time_between_foff_events = np.diff(np.nonzero(foff_events)[0])*dt
-    plt.hist(time_between_foff_events,density=False)
+    avgt_foff = np.average(time_between_foff_events)
+    plt.text(20,25,'avg time = {}'.format(avgt_foff))
+    plt.hist(time_between_foff_events,density=False,bins=50)
     plt.title('Time between force off events')
     plt.xlabel('time (min)')
     plt.savefig(save_path+'/time_between_foff.png')
+    plt.clf()
+
+###################################################################################################################################################
+
+#function that plots histogram of time between events for both force on and force off
+#Inputs:
+# fon_times => time force on event happens (type: list of ints with len=t_end/dt)
+# foff_times => time force off event happens (type: list of ints with len=t_end/dt)
+# save_path => path to folder where plot will be saved to (type: string)
+#Outputs:
+# figures of the histogram of time between both fon and foff events
+def plot_timebtw_force_onoff_method2(fon_times, foff_times, save_path):
+    nonzero_fontimes = list(filter(lambda x: x != 0, fon_times))
+    time_between_fon_events = np.diff(nonzero_fontimes)
+    avgt_fon = np.average(time_between_fon_events)
+    plt.text(20,25,'avg time = {}'.format(avgt_fon))
+    plt.hist(time_between_fon_events,density=False,bins=50)
+    plt.title('time between force on events')
+    plt.xlabel('time (min)')
+    plt.savefig(save_path+'/time_between_fon_2.png')
+    plt.clf()
+
+    nonzero_fofftimes = list(filter(lambda x: x != 0, foff_times))
+    time_between_foff_events = np.diff(nonzero_fofftimes)
+    avgt_foff = np.average(time_between_foff_events)
+    plt.text(20,25,'avg time = {}'.format(avgt_foff))
+    plt.hist(time_between_foff_events,density=False,bins=50)
+    plt.title('Time between force off events')
+    plt.xlabel('time (min)')
+    plt.savefig(save_path+'/time_between_foff_2.png')
     plt.clf()
 
 ###################################################################################################################################################

@@ -12,7 +12,7 @@ import math
 # force => updated force state, either 1 for on or 0 for off (type: int)
 # fon_e => whether force was swithced from off to on at this time step (0 is no and 1 is yes) (type: int)
 # foff_e => whether force was swithced from on to off at this time step (0 is no and 1 is yes) (type: int)
-def update_F(force, dt, kon=0.3, koff=0.3):
+def update_F(force, dt, time, kon=0.3, koff=0.3):
   if force == 0: #force is off
     prob_on = kon*dt
     rand_num = np.random.uniform()
@@ -20,9 +20,13 @@ def update_F(force, dt, kon=0.3, koff=0.3):
       force = 1
       fon_e = 1
       foff_e = 0
+      fon_t = time
+      foff_t = 0
     else:
       fon_e = 0
       foff_e = 0
+      fon_t = 0
+      foff_t = 0
   elif force == 1:
     prob_off = koff*dt
     rand_num = np.random.uniform()
@@ -30,11 +34,15 @@ def update_F(force, dt, kon=0.3, koff=0.3):
       force = 0
       foff_e = 1
       fon_e = 0
+      foff_t = time
+      fon_t = 0
     else:
       foff_e = 0
       fon_e = 0
+      foff_t = 0
+      fon_t = 0
 
-  return force, fon_e, foff_e
+  return force, fon_e, foff_e, fon_t, foff_t
 
 ###################################################################################################################################################
 
@@ -49,7 +57,7 @@ def update_F(force, dt, kon=0.3, koff=0.3):
 # force => updated state of force - 1 for on and 0 for off (type: int)
 # fon_e => whether force was swithced from off to on at this time step (0 is no and 1 is yes) (type: int)
 # foff_e => whether force was swithced from on to off at this time step (0 is no and 1 is yes) (type: int)
-def cell_motion(dt,y_val,force_prev, params):
+def cell_motion(dt,y_val,force_prev, params,time):
   xpr = y_val[0]
   ypr = y_val[1]
   xcb = y_val[2]
@@ -80,7 +88,7 @@ def cell_motion(dt,y_val,force_prev, params):
   xR = xpr - xcb
   yR = ypr - ycb
 
-  force, fon_e, foff_e = update_F(force_prev, dt, kon, koff)
+  force, fon_e, foff_e, fon_t, foff_t = update_F(force_prev, dt, time, kon, koff)
 
   thetaR = math.atan2(yR,xR)
 
@@ -99,7 +107,7 @@ def cell_motion(dt,y_val,force_prev, params):
   dr = [(1/nu_pr)*(force_x-F_springx)+prx_noise, (1/nu_pr)*(force_y-F_springy)+pry_noise, (1/nu_cb)*F_springx+cbx_noise, (1/nu_cb)*F_springy+cby_noise]
 
 
-  return np.array(dr), force, fon_e, foff_e
+  return np.array(dr), force, fon_e, foff_e, fon_t, foff_t
 
 ###################################################################################################################################################
 
@@ -124,6 +132,8 @@ def EulerSolver(func, t_start, t_end, dt, y0, f0, params):
 
   fon_events = []
   foff_events = []
+  fon_times = []
+  foff_times = []
 
   force_each_step = []
 
@@ -135,9 +145,12 @@ def EulerSolver(func, t_start, t_end, dt, y0, f0, params):
 
   f_prev = f0
 
+  time = t_start
+
 
   for i in range(number_steps):
-    m, f_curr, fon_e, foff_e = func(dt, y_prev, f_prev, params)
+    time +=dt
+    m, f_curr, fon_e, foff_e, fon_t, foff_t = func(dt, y_prev, f_prev, params,time)
     y_curr = y_prev + dt*m
     t_curr = t_prev + dt
     Y.append(y_curr)
@@ -145,6 +158,8 @@ def EulerSolver(func, t_start, t_end, dt, y0, f0, params):
 
     fon_events.append(fon_e)
     foff_events.append(foff_e)
+    fon_times.append(fon_t)
+    foff_times.append(foff_t)
     force_each_step.append(f_curr)
 
     y_prev = y_curr
@@ -152,4 +167,4 @@ def EulerSolver(func, t_start, t_end, dt, y0, f0, params):
 
     f_prev = f_curr
 
-  return T, np.array(Y), force_each_step, fon_events, foff_events
+  return T, np.array(Y), force_each_step, fon_events, foff_events, fon_times, foff_times
