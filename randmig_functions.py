@@ -19,28 +19,28 @@ def update_F(force, dt, time, kon=0.3, koff=0.3):
     if rand_num < prob_on:
       force = 1
       fon_e = 1
-      foff_e = 0
+      foff_e = np.nan
       fon_t = time
-      foff_t = 0
+      foff_t = np.nan
     else:
       fon_e = 0
-      foff_e = 0
-      fon_t = 0
-      foff_t = 0
+      foff_e = np.nan
+      fon_t = np.nan
+      foff_t = np.nan
   elif force == 1:
     prob_off = koff*dt
     rand_num = np.random.uniform()
     if rand_num < prob_off:
       force = 0
       foff_e = 1
-      fon_e = 0
+      fon_e = np.nan
       foff_t = time
-      fon_t = 0
+      fon_t = np.nan
     else:
       foff_e = 0
-      fon_e = 0
-      foff_t = 0
-      fon_t = 0
+      fon_e = np.nan
+      foff_t = np.nan
+      fon_t = np.nan
 
   return force, fon_e, foff_e, fon_t, foff_t
 

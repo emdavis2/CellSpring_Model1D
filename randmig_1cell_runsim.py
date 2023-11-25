@@ -6,7 +6,7 @@ from velocity_and_acf_functions import *
 from event_verifi_plot_functions import *
 
 #Total sim time
-T_tot = 3000 #[min]
+T_tot = 9000 #[min]
 #step size
 dt = .05 #[min]
 
@@ -59,7 +59,7 @@ plot_vel_acf_onecell(onewalker_df['vx'],onewalker_df['vy'],save_path)
 #plot cell length over time
 #plot_celllength_overtime(onewalker_df,T_tot,save_path)
 
-plot_timebtw_force_onoff(fon_events, foff_events, dt, save_path)
+plot_timebtw_force_onoff(fon_events, foff_events, dt, kon, koff, save_path)
 plot_cumnumevents(fon_events, foff_events, T_tot, save_path)
 plot_events_5min_win(fon_events, foff_events, T_tot, dt, save_path)
 

@@ -9,22 +9,34 @@ import matplotlib.pyplot as plt
 # save_path => path to folder where plot will be saved to (type: string)
 #Outputs:
 # figures of the histogram of time between both fon and foff events
-def plot_timebtw_force_onoff(fon_events, foff_events, dt, save_path):
+def plot_timebtw_force_onoff(fon_events, foff_events, dt, kon, koff, save_path):
+    x_plot = np.linspace(0,30,1000)
+
+    fon_events = np.array(fon_events)
+    fon_events = fon_events[~np.isnan(fon_events)]
     time_between_fon_events = np.diff(np.nonzero(fon_events)[0])*dt
     avgt_fon = np.average(time_between_fon_events)
-    plt.text(20,25,'avg time = {}'.format(avgt_fon))
-    plt.hist(time_between_fon_events,density=False,bins=50)
+    plt.text(10,0.25,'avg time = {}'.format(avgt_fon))
+    plt.text(10,0.2,'on rate = {}'.format(kon))
+    plt.hist(time_between_fon_events,density=True,bins=50)
+    plt.plot(x_plot, kon*np.exp(-kon*x_plot), label=r'exp fit $f(x)=k_{on} e^{k_{on} x}$')
     plt.title('time between force on events')
     plt.xlabel('time (min)')
+    plt.legend()
     plt.savefig(save_path+'/time_between_fon.png')
     plt.clf()
 
+    foff_events = np.array(foff_events)
+    foff_events = foff_events[~np.isnan(foff_events)]
     time_between_foff_events = np.diff(np.nonzero(foff_events)[0])*dt
     avgt_foff = np.average(time_between_foff_events)
-    plt.text(20,25,'avg time = {}'.format(avgt_foff))
-    plt.hist(time_between_foff_events,density=False,bins=50)
+    plt.text(10,0.25,'avg time = {}'.format(avgt_foff))
+    plt.text(10,0.2,'off rate = {}'.format(koff))
+    plt.hist(time_between_foff_events,density=True,bins=50)
+    plt.plot(x_plot, koff*np.exp(-koff*x_plot), label=r'exp fit $f(x)=k_{off} e^{k_{off} x}$')
     plt.title('Time between force off events')
     plt.xlabel('time (min)')
+    plt.legend()
     plt.savefig(save_path+'/time_between_foff.png')
     plt.clf()
 
@@ -38,8 +50,10 @@ def plot_timebtw_force_onoff(fon_events, foff_events, dt, save_path):
 #Outputs:
 # figures of the histogram of time between both fon and foff events
 def plot_timebtw_force_onoff_method2(fon_times, foff_times, save_path):
-    nonzero_fontimes = list(filter(lambda x: x != 0, fon_times))
-    time_between_fon_events = np.diff(nonzero_fontimes)
+    fon_times = np.array(fon_times)
+    fon_times = list(fon_times[~np.isnan(fon_times)])
+    #nonzero_fontimes = list(filter(lambda x: x != 0, fon_times))
+    time_between_fon_events = np.diff(fon_times)
     avgt_fon = np.average(time_between_fon_events)
     plt.text(20,25,'avg time = {}'.format(avgt_fon))
     plt.hist(time_between_fon_events,density=False,bins=50)
@@ -48,8 +62,10 @@ def plot_timebtw_force_onoff_method2(fon_times, foff_times, save_path):
     plt.savefig(save_path+'/time_between_fon_2.png')
     plt.clf()
 
-    nonzero_fofftimes = list(filter(lambda x: x != 0, foff_times))
-    time_between_foff_events = np.diff(nonzero_fofftimes)
+    foff_times = np.array(foff_times)
+    foff_times = list(foff_times[~np.isnan(foff_times)])
+    #nonzero_fofftimes = list(filter(lambda x: x != 0, foff_times))
+    time_between_foff_events = np.diff(foff_times)
     avgt_foff = np.average(time_between_foff_events)
     plt.text(20,25,'avg time = {}'.format(avgt_foff))
     plt.hist(time_between_foff_events,density=False,bins=50)
