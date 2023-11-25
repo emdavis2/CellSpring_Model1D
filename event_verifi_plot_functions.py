@@ -17,7 +17,7 @@ def plot_timebtw_force_onoff(fon_events, foff_events, dt, kon, koff, save_path):
     time_between_fon_events = np.diff(np.nonzero(fon_events)[0])*dt
     avgt_fon = np.average(time_between_fon_events)
     plt.text(10,0.25,'avg time = {}'.format(avgt_fon))
-    plt.text(10,0.2,'on rate = {}'.format(kon))
+    plt.text(10,0.2,'on rate, kon = {}'.format(kon))
     plt.hist(time_between_fon_events,density=True,bins=50)
     plt.plot(x_plot, kon*np.exp(-kon*x_plot), label=r'exp fit $f(x)=k_{on} e^{k_{on} x}$')
     plt.title('time between force on events')
@@ -31,7 +31,7 @@ def plot_timebtw_force_onoff(fon_events, foff_events, dt, kon, koff, save_path):
     time_between_foff_events = np.diff(np.nonzero(foff_events)[0])*dt
     avgt_foff = np.average(time_between_foff_events)
     plt.text(10,0.25,'avg time = {}'.format(avgt_foff))
-    plt.text(10,0.2,'off rate = {}'.format(koff))
+    plt.text(10,0.2,'off rate, koff = {}'.format(koff))
     plt.hist(time_between_foff_events,density=True,bins=50)
     plt.plot(x_plot, koff*np.exp(-koff*x_plot), label=r'exp fit $f(x)=k_{off} e^{k_{off} x}$')
     plt.title('Time between force off events')
